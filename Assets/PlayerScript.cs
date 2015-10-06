@@ -3,11 +3,13 @@ using System.Collections;
 
 public class PlayerScript : MonoBehaviour {
 
-    const float beginningMultipler = 5.0f;
-    Rigidbody playerRB, cameraRB, goalRB;
+    const float START_SPEED_MULTIPLIER = 10.0f, START_ROTATION_MULTIPLIER = 5.0f;
+    Rigidbody playerRB;
+    public Transform cameraT, goalT;
+    Vector3 oldPosition;
     Vector2 mouseInput;
     Vector3 kbInput;
-    float speedMultiplier;
+    float speedMultiplier, rotationMultiplier;
     float distanceToGoal;
     bool isJumping;
 
@@ -15,7 +17,8 @@ public class PlayerScript : MonoBehaviour {
 	void Start () 
     {
         playerRB = GetComponent<Rigidbody>();
-        UpdateMultiplier(beginningMultipler);
+        speedMultiplier = START_SPEED_MULTIPLIER;
+        rotationMultiplier = START_ROTATION_MULTIPLIER;
 	}
 	
 	// Update is called once per frame
@@ -28,9 +31,12 @@ public class PlayerScript : MonoBehaviour {
     
     void FixedUpdate()
     {
+
+        oldPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z);
         UpdateDistanceToGoal();
         //if(distanceToGoal > x)
         MoveWithStandardControls();
+        CameraStandardFollow(oldPosition);
         //else if distanceToGoal > y
         //MoveWithTankControls
         
@@ -39,7 +45,22 @@ public class PlayerScript : MonoBehaviour {
 
     void MoveWithStandardControls()
     {
-        //playerRB
+        kbInput *= speedMultiplier;
+        mouseInput.x *= rotationMultiplier;
+        if (isJumping)
+            playerRB.velocity = transform.TransformDirection(kbInput.x, playerRB.velocity.y, kbInput.z);
+        else
+            playerRB.velocity = transform.TransformDirection(kbInput);
+        transform.Rotate(0f, mouseInput.x, 0f); // turn left or right
+        cameraT.RotateAround(transform.position, Vector3.up, mouseInput.x);
+        cameraT.Rotate(-mouseInput.y, 0f, 0f);
+    }
+
+    void CameraStandardFollow(Vector3 prevPos)
+    {
+        Debug.Log(transform.position + "   " + prevPos);
+        Vector3 moveVector = transform.position - prevPos;
+        cameraT.Translate(moveVector);
     }
 
     void MoveWithTankControls()
@@ -61,7 +82,7 @@ public class PlayerScript : MonoBehaviour {
 
     void UpdateDistanceToGoal()
     {
-       distanceToGoal = Vector3.Distance(playerRB.position, cameraRB.position);
+       distanceToGoal = Vector3.Distance(playerRB.position, goalT.position);
     }
 
     void UpdateIsJumping()
