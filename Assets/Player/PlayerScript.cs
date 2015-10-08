@@ -19,21 +19,24 @@ public class PlayerScript : MonoBehaviour {
         playerRB = GetComponent<Rigidbody>();
         speedMultiplier = START_SPEED_MULTIPLIER;
         rotationMultiplier = START_ROTATION_MULTIPLIER;
+        isJumping = false;
 	}
 	
 	// Update is called once per frame
 	void Update () 
     {
-        UpdateInputVectors();
-        UpdateIsJumping();
+        
 
 	}
     
     void FixedUpdate()
     {
+        UpdateInputVectors();
 
         oldPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z);
         UpdateDistanceToGoal();
+
+        UpdateIsJumping();
         //if(distanceToGoal > x)
         MoveWithStandardControls();
         CameraStandardFollow(oldPosition);
@@ -48,19 +51,29 @@ public class PlayerScript : MonoBehaviour {
         kbInput *= speedMultiplier;
         mouseInput.x *= rotationMultiplier;
         if (isJumping)
+        {
+            Debug.Log("Jumping");
             playerRB.velocity = transform.TransformDirection(kbInput.x, playerRB.velocity.y, kbInput.z);
+        }
         else
+        {
+            //Debug.Log("Not Jumping");
             playerRB.velocity = transform.TransformDirection(kbInput);
-        transform.Rotate(0f, mouseInput.x, 0f); // turn left or right
-        cameraT.RotateAround(transform.position, Vector3.up, mouseInput.x);
-        cameraT.Rotate(-mouseInput.y, 0f, 0f);
+        }
+        //transform.Rotate(0f, mouseInput.x, 0f); // turn left or right
+        //cameraT.RotateAround(transform.position, Vector3.up, mouseInput.x);
+        //cameraT.Rotate(-mouseInput.y, 0f, 0f);
     }
 
     void CameraStandardFollow(Vector3 prevPos)
     {
-        Debug.Log(transform.position + "   " + prevPos);
+        /*/Debug.Log(transform.position + "   " + prevPos)
         Vector3 moveVector = transform.position - prevPos;
-        cameraT.Translate(moveVector);
+        if (moveVector.x > 0 || moveVector.y > 0 || moveVector.z > 0)
+            Debug.Log(moveVector);
+        cameraT.position += moveVector;*/
+        cameraT.position = new Vector3(cameraT.position.x, cameraT.position.y, transform.position.z - 20f);
+
     }
 
     void MoveWithTankControls()
@@ -87,9 +100,14 @@ public class PlayerScript : MonoBehaviour {
 
     void UpdateIsJumping()
     {
+        //Debug.Log(playerRB.velocity.y);
         if (playerRB.velocity.y < 0.005f && playerRB.velocity.y > -0.005f)
+        {
             isJumping = false;
+        }
         else
+        {
             isJumping = true;
+        }
     }
 }
