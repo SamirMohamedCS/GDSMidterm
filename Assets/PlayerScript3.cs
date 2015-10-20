@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerScript : MonoBehaviour {
+public class PlayerScript3 : MonoBehaviour
+{
 
     //public static Transform playerTransform;
     const float START_SPEED_MULTIPLIER = 10.0f, START_ROTATION_MULTIPLIER = 5.0f;
@@ -10,7 +11,7 @@ public class PlayerScript : MonoBehaviour {
     Vector3 oldPosition;
     Vector2 mouseInput;
     Vector3 kbInput;
-    public Transform defaultSpawnLoc, carSpawnLoc, spawnLoc2, respawn;
+    public Transform defaultSpawnLoc, carSpawnLoc, spawnLoc2;
     float speedMultiplier, rotationMultiplier;
     float distanceToGoal;
     bool isJumping;
@@ -21,43 +22,40 @@ public class PlayerScript : MonoBehaviour {
     bool useSecondSpawn = false;
     public Light l1, l2, l3;
 
-	// Use this for initialization
-	void Start () 
+    // Use this for initialization
+    void Start()
     {
         playerRB = GetComponent<Rigidbody>();
         speedMultiplier = START_SPEED_MULTIPLIER;
         rotationMultiplier = START_ROTATION_MULTIPLIER;
         isJumping = false;
-        respawn.position = transform.position;
-	}
-	
-	// Update is called once per frame
-	void Update () 
-    {
-        
+    }
 
-	}
-    
+    // Update is called once per frame
+    void Update()
+    {
+
+
+    }
+
     void FixedUpdate()
     {
         UpdateInputVectors();
 
         oldPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z);
         UpdateDistanceToGoal();
-
-        UpdateLights();
+        
 
         UpdateIsJumping();
         //if(distanceToGoal > x)
         MoveWithStandardControls();
-        UpdateRespawn();
         CameraStandardFollow(oldPosition);
         //else if distanceToGoal > y
         //MoveWithTankControls
         //Debug.Log(distanceToGoal);
         float spawnMultiplier = distanceToGoal / 100;
         Debug.Log(spawnMultiplier);
-        if(spawnMultiplier < 2)
+        if (spawnMultiplier < 2)
         {
             spawnMultiplier = 2;
         }
@@ -66,12 +64,8 @@ public class PlayerScript : MonoBehaviour {
             SpawnEnemy();
             Debug.Log("Spawning Enemey");
             frame = 0;
-            if(useSecondSpawn)
-            {
-                SpawnEnemy2();
-            }
         }
-        if(frame2  > 300 + frame)
+        if (frame2 > 300 + frame)
         {
             frame2 = 0;
             SpawnCar();
@@ -80,16 +74,6 @@ public class PlayerScript : MonoBehaviour {
         frame2++;
     }
 
-    void UpdateRespawn()
-    {
-        respawn.position = new Vector3(respawn.position.x, respawn.position.y, transform.position.z - 20f);
-    }
-
-    public void Respawn()
-    {
-        transform.position = respawn.position;
-        transform.rotation = respawn.rotation;
-    }
     void UpdateLights()
     {
         float lerpTime = distanceToGoal / 500;
@@ -104,7 +88,7 @@ public class PlayerScript : MonoBehaviour {
         Vector3 spawnLoc = new Vector3(randX, defaultSpawnLoc.position.y, defaultSpawnLoc.position.z);
         float randMass = Random.Range(minMass, maxMass);
         float randEType = Random.value;
-        if(distanceToGoal / 500 > randEType)
+        if (distanceToGoal / 500 > randEType)
         {
             GameObject newE = (GameObject)Instantiate(NiceE, spawnLoc, Quaternion.identity);
             //newE.GetComponent<NiceE>().SetMass(randMass);
@@ -116,24 +100,6 @@ public class PlayerScript : MonoBehaviour {
         }
         //Instantiate(NiceE, spawnLoc, Quaternion.identity);
     }
-    void SpawnEnemy2()
-    {
-        float randX = Random.Range(minX, maxX);
-        Vector3 spawnLoc = new Vector3(randX, spawnLoc2.position.y, spawnLoc2.position.z);
-        float randMass = Random.Range(minMass, maxMass);
-        float randEType = Random.value;
-        if (distanceToGoal / 500 > randEType)
-        {
-            NiceE newE = (NiceE)Instantiate(NiceE, spawnLoc, Quaternion.identity);
-            newE.SetMass(randMass);
-        }
-        else
-        {
-            HarshE newE = (HarshE)Instantiate(NiceE, spawnLoc, Quaternion.identity);
-            newE.SetMass(randMass);
-        }
-        //Instantiate(NiceE, spawnLoc, Quaternion.identity);
-    }
     public void ToggleSpawn2()
     {
         useSecondSpawn = !useSecondSpawn;
@@ -142,7 +108,7 @@ public class PlayerScript : MonoBehaviour {
     void SpawnCar()
     {
         Vector3 spawnLoc = carSpawnLoc.position;
-        Instantiate(Car, spawnLoc, Quaternion.identity);
+        NiceE newE = (NiceE)Instantiate(Car, spawnLoc, Quaternion.identity);
     }
 
 
@@ -190,14 +156,14 @@ public class PlayerScript : MonoBehaviour {
         mouseInput = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
     }
 
-   void UpdateMultiplier(float newMultiplier)
+    void UpdateMultiplier(float newMultiplier)
     {
         speedMultiplier = newMultiplier;
     }
 
     void UpdateDistanceToGoal()
     {
-       distanceToGoal = Vector3.Distance(playerRB.position, goalT.position);
+        distanceToGoal = Vector3.Distance(playerRB.position, goalT.position);
     }
 
     void UpdateIsJumping()

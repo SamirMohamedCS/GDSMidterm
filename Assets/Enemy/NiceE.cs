@@ -6,14 +6,13 @@ public class NiceE : MonoBehaviour {
     //public Transform playerT;
     Rigidbody myRB;
     float speed = .07f;
-    bool movingRight, shouldMove;
+    bool shouldMove;
 
 	// Use this for initialization
 	void Start () 
     {
         myRB = GetComponent<Rigidbody>();
         shouldMove = true;
-        movingRight = true;
 	}
 	
 	// Update is called once per frame
