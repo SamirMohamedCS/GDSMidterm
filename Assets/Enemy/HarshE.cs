@@ -6,9 +6,7 @@ public class HarshE : MonoBehaviour
 
     public Transform playerT;
     Rigidbody myRB;
-    float speed = .03f;
-    float minX = -17f;
-    float maxX = 17f;
+    float speed = .07f;
     bool movingRight, shouldMove;
 
     // Use this for initialization
@@ -22,7 +20,6 @@ public class HarshE : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("ShouldMove: " + shouldMove + "   MovingRight: " + movingRight);
         //float dist = Vector3.Distance(transform.position, playerT.position);
         if (shouldMove)
         {
@@ -30,39 +27,37 @@ public class HarshE : MonoBehaviour
         }
     }
 
-    void MoveBackAndForth()
+    public void SetPosition(Vector3 inPosition)
     {
-        if (movingRight)
-        {
-            if (transform.position.x >= maxX)
-            {
-                movingRight = false;
-            }
-            else
-            {
-                transform.Translate(speed, 0f, 0f);
-                //myRB.velocity = transform.TransformDirection(speed, 0f, 0f);
-            }
-        }
-        else
-        {
-            if (transform.position.x < minX)
-            {
-                movingRight = true;
-            }
-            else
-            {
-                transform.Translate(-speed, 0f, 0f);
-                //myRB.velocity = transform.TransformDirection(-speed, 0f, 0f);
-            }
-        }
+        transform.position = inPosition;
     }
 
+    public void SetSpeed(float newSpeed)
+    {
+        speed = newSpeed;
+    }
+
+    public void SetMass(float newMass)
+    {
+        myRB.mass = newMass;
+    }
+
+    void MoveBackAndForth()
+    {
+        transform.Translate(0f, 0f, -speed);
+        
+    }
+
+    /*
     void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Player" || other.tag == "Enemy")
         {
             shouldMove = false;
+        }
+        else if (other.tag == "respawnE")
+        {
+
         }
     }
 
@@ -72,5 +67,5 @@ public class HarshE : MonoBehaviour
         {
             shouldMove = true;
         }
-    }
+    }*/
 }

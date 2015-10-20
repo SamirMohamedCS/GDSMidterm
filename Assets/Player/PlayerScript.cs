@@ -3,15 +3,20 @@ using System.Collections;
 
 public class PlayerScript : MonoBehaviour {
 
+    //public static Transform playerTransform;
     const float START_SPEED_MULTIPLIER = 10.0f, START_ROTATION_MULTIPLIER = 5.0f;
     Rigidbody playerRB;
     public Transform cameraT, goalT;
     Vector3 oldPosition;
     Vector2 mouseInput;
     Vector3 kbInput;
+    public Transform defaultSpawnLoc;
     float speedMultiplier, rotationMultiplier;
     float distanceToGoal;
     bool isJumping;
+    public GameObject NiceE, HarshE;
+    float minX = -18f, maxX = 18f;
+    float frame;
 
 	// Use this for initialization
 	void Start () 
@@ -42,9 +47,22 @@ public class PlayerScript : MonoBehaviour {
         CameraStandardFollow(oldPosition);
         //else if distanceToGoal > y
         //MoveWithTankControls
-        
+        //Debug.Log(distanceToGoal);
+        if (frame == 60)
+        {
+            SpawnEnemy();
+            Debug.Log("Spawning Enemy!!!!");
+            frame = 0;
+        }
+        frame++;
     }
 
+    void SpawnEnemy()
+    {
+        float randX = Random.Range(minX, maxX);
+        Vector3 spawnLoc = new Vector3(randX, defaultSpawnLoc.position.y, defaultSpawnLoc.position.z);
+        Instantiate(NiceE, spawnLoc, Quaternion.identity);
+    }
 
     void MoveWithStandardControls()
     {
@@ -52,7 +70,7 @@ public class PlayerScript : MonoBehaviour {
         mouseInput.x *= rotationMultiplier;
         if (isJumping)
         {
-            Debug.Log("Jumping");
+            //Debug.Log("Jumping");
             playerRB.velocity = transform.TransformDirection(kbInput.x, playerRB.velocity.y, kbInput.z);
         }
         else
